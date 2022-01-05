@@ -158,7 +158,7 @@ Call <xref:Microsoft.Extensions.Configuration.EnvironmentVariablesExtensions.Add
 
 In the preceding code:
 
-* `config.AddEnvironmentVariables(prefix: "MyCustomPrefix_")` is added after the [default configuration providers](#default). For an example of ordering the configuration providers, see [JSON configuration provider](#jcp).
+* `builder.Configuration.AddEnvironmentVariables(prefix: "MyCustomPrefix_")` is added after the [default configuration providers](#default). For an example of ordering the configuration providers, see [JSON configuration provider](#jcp).
 * Environment variables set with the `MyCustomPrefix_` prefix override the [default configuration providers](#default). This includes environment variables without the prefix.
 
 The prefix is stripped off when the configuration key-value pairs are read.
@@ -212,13 +212,13 @@ Environment variable names reflect the structure of an *appsettings.json* file. 
 **environment variables**
 
 ```console
-setx SmtpServer=smtp.example.com
-setx Logging__0__Name=ToEmail
-setx Logging__0__Level=Critical
-setx Logging__0__Args__FromAddress=MySystem@example.com
-setx Logging__0__Args__ToAddress=SRE@example.com
-setx Logging__1__Name=ToConsole
-setx Logging__1__Level=Information
+setx SmtpServer smtp.example.com
+setx Logging__0__Name ToEmail
+setx Logging__0__Level Critical
+setx Logging__0__Args__FromAddress MySystem@example.com
+setx Logging__0__Args__ToAddress SRE@example.com
+setx Logging__1__Name ToConsole
+setx Logging__1__Level Information
 ```
 
 ### Environment variables set in generated launchSettings.json
@@ -1061,13 +1061,13 @@ Environment variable names reflect the structure of an *appsettings.json* file. 
 **environment variables**
 
 ```console
-setx SmtpServer=smtp.example.com
-setx Logging__0__Name=ToEmail
-setx Logging__0__Level=Critical
-setx Logging__0__Args__FromAddress=MySystem@example.com
-setx Logging__0__Args__ToAddress=SRE@example.com
-setx Logging__1__Name=ToConsole
-setx Logging__1__Level=Information
+setx SmtpServer smtp.example.com
+setx Logging__0__Name ToEmail
+setx Logging__0__Level Critical
+setx Logging__0__Args__FromAddress MySystem@example.com
+setx Logging__0__Args__ToAddress SRE@example.com
+setx Logging__1__Name ToConsole
+setx Logging__1__Level Information
 ```
 
 ### Environment variables set in generated launchSettings.json

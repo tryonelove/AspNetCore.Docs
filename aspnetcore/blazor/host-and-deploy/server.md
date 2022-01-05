@@ -83,6 +83,11 @@ To configure an app for the Azure SignalR Service, the app must support *sticky 
 
   * The app service's **Configuration** > **Application settings** in the Azure portal (**Name**: `Azure__SignalR__StickyServerMode`, **Value**: `Required`). This approach is adopted for the app automatically if you [provision the Azure SignalR Service](#provision-the-azure-signalr-service).
 
+> [!NOTE]
+> The following error is thrown by an app that hasn't enabled sticky sessions for Azure SignalR Service:
+>
+> > blazor.server.js:1 Uncaught (in promise) Error: Invocation canceled due to the underlying connection being closed.
+
 ### Provision the Azure SignalR Service
 
 To provision the Azure SignalR Service for an app in Visual Studio:
@@ -201,36 +206,11 @@ For more information, see the [Apache documentation](https://httpd.apache.org/do
 
 ## Measure network latency
 
-[JS interop](xref:blazor/js-interop/call-javascript-from-dotnet) can be used to measure network latency, as the following example demonstrates:
+[JS interop](xref:blazor/js-interop/call-javascript-from-dotnet) can be used to measure network latency, as the following example demonstrates.
 
-```razor
-@inject IJSRuntime JS
+`Shared/MeasureLatency.razor`:
 
-@if (latency is null)
-{
-    <span>Calculating...</span>
-}
-else
-{
-    <span>@(latency.Value.TotalMilliseconds)ms</span>
-}
-
-@code {
-    private DateTime startTime;
-    private TimeSpan? latency;
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            startTime = DateTime.UtcNow;
-            var _ = await JS.InvokeAsync<string>("toString");
-            latency = DateTime.UtcNow - startTime;
-            StateHasChanged();
-        }
-    }
-}
-```
+[!code-razor[](~/blazor/samples/6.0/BlazorSample_WebAssembly/Shared/host-and-deploy/MeasureLatency.razor)]
 
 For a reasonable UI experience, we recommend a sustained UI latency of 250 ms or less.
 
@@ -303,6 +283,11 @@ To configure an app for the Azure SignalR Service, the app must support *sticky 
     ```
 
   * The app service's **Configuration** > **Application settings** in the Azure portal (**Name**: `Azure__SignalR__StickyServerMode`, **Value**: `Required`). This approach is adopted for the app automatically if you [provision the Azure SignalR Service](#provision-the-azure-signalr-service).
+
+> [!NOTE]
+> The following error is thrown by an app that hasn't enabled sticky sessions for Azure SignalR Service:
+>
+> > blazor.server.js:1 Uncaught (in promise) Error: Invocation canceled due to the underlying connection being closed.
 
 ### Provision the Azure SignalR Service
 
@@ -524,6 +509,11 @@ To configure an app for the Azure SignalR Service, the app must support *sticky 
     ```
 
   * The app service's **Configuration** > **Application settings** in the Azure portal (**Name**: `Azure__SignalR__StickyServerMode`, **Value**: `Required`). This approach is adopted for the app automatically if you [provision the Azure SignalR Service](#provision-the-azure-signalr-service).
+
+> [!NOTE]
+> The following error is thrown by an app that hasn't enabled sticky sessions for Azure SignalR Service:
+>
+> > blazor.server.js:1 Uncaught (in promise) Error: Invocation canceled due to the underlying connection being closed.
 
 ### Provision the Azure SignalR Service
 

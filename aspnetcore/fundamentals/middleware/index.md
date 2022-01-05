@@ -11,7 +11,7 @@ uid: fundamentals/middleware/index
 ---
 # ASP.NET Core Middleware
 
-::: moniker range=">= aspnetcore-6.0"
+:::moniker range=">= aspnetcore-6.0"
 
 By [Rick Anderson](https://twitter.com/RickAndMSFT) and [Steve Smith](https://ardalis.com/)
 
@@ -25,6 +25,10 @@ Request delegates are used to build the request pipeline. The request delegates 
 Request delegates are configured using <xref:Microsoft.AspNetCore.Builder.RunExtensions.Run%2A>, <xref:Microsoft.AspNetCore.Builder.MapExtensions.Map%2A>, and <xref:Microsoft.AspNetCore.Builder.UseExtensions.Use%2A> extension methods. An individual request delegate can be specified in-line as an anonymous method (called in-line middleware), or it can be defined in a reusable class. These reusable classes and in-line anonymous methods are *middleware*, also called *middleware components*. Each middleware component in the request pipeline is responsible for invoking the next component in the pipeline or short-circuiting the pipeline. When a middleware short-circuits, it's called a *terminal middleware* because it prevents further middleware from processing the request.
 
 <xref:migration/http-modules> explains the difference between request pipelines in ASP.NET Core and ASP.NET 4.x and provides additional middleware samples.
+
+## Middleware code analysis
+
+ASP.NET Core includes many compiler platform analyzers that inspect application code for quality. For more information, see <xref:diagnostics/code-analysis>
 
 ## Create a middleware pipeline with `WebApplication`
 
@@ -217,20 +221,20 @@ app.Map("/level1", level1App => {
 
 <xref:Microsoft.AspNetCore.Builder.MapWhenExtensions.MapWhen%2A> branches the request pipeline based on the result of the given predicate. Any predicate of type `Func<HttpContext, bool>` can be used to map requests to a new branch of the pipeline. In the following example, a predicate is used to detect the presence of a query string variable `branch`:
 
-[!code-csharp[](index/snapshot/Chain/StartupMapWhen.cs?highlight=14-15)]
+[!code-csharp[](index/snapshot/Chain60/ProgramMapWhen.cs?highlight=4)]
 
 The following table shows the requests and responses from `http://localhost:1234` using the previous code:
 
-| Request                       | Response                     |
-| ----------------------------- | ---------------------------- |
-| localhost:1234                | Hello from non-Map delegate. |
-| localhost:1234/?branch=main | Branch used = main         |
+| Request                       | Response                       |
+| ----------------------------- | ------------------------------ |
+| `localhost:1234`              | `Hello from non-Map delegate.` |
+| `localhost:1234/?branch=main` | `Branch used = main`           |
 
 <xref:Microsoft.AspNetCore.Builder.UseWhenExtensions.UseWhen%2A> also branches the request pipeline based on the result of the given predicate. Unlike with `MapWhen`, this branch is rejoined to the main pipeline if it doesn't short-circuit or contain a terminal middleware:
 
 [!code-csharp[](index/snapshot/Chain60/ProgramUseWhen.cs?highlight=4-5)]
 
-In the preceding example, a response of "Hello from main pipeline." is written for all requests. If the request includes a query string variable `branch`, its value is logged before the main pipeline is rejoined.
+In the preceding example, a response of `Hello from non-Map delegate.` is written for all requests. If the request includes a query string variable `branch`, its value is logged before the main pipeline is rejoined.
 
 ## Built-in middleware
 
@@ -275,9 +279,9 @@ ASP.NET Core ships with the following middleware components. The *Order* column 
 * <xref:fundamentals/middleware/extensibility>
 * <xref:fundamentals/middleware/extensibility-third-party-container>
 
-::: moniker-end
+:::moniker-end
 
-::: moniker range="< aspnetcore-6.0"
+:::moniker range="< aspnetcore-6.0"
 
 By [Rick Anderson](https://twitter.com/RickAndMSFT) and [Steve Smith](https://ardalis.com/)
 
@@ -544,4 +548,4 @@ ASP.NET Core ships with the following middleware components. The *Order* column 
 * <xref:fundamentals/middleware/extensibility>
 * <xref:fundamentals/middleware/extensibility-third-party-container>
 
-::: moniker-end
+:::moniker-end

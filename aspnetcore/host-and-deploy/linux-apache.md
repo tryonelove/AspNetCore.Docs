@@ -126,7 +126,7 @@ Complete!
 
 ### Configure Apache
 
-Configuration files for Apache are located within the `/etc/httpd/conf.d/` directory. Any file with the *.conf* extension is processed in alphabetical order in addition to the module configuration files in `/etc/httpd/conf.modules.d/`, which contains any configuration files necessary to load modules.
+Configuration files for Apache are located within the `/etc/httpd/conf.d/` directory. In Apache on Ubuntu, all the virtual host configuration files are stored in `/etc/apache2/sites-available`. Any file with the *.conf* extension is processed in alphabetical order in addition to the module configuration files in `/etc/httpd/conf.modules.d/`, which contains any configuration files necessary to load modules.
 
 Create a configuration file, named *helloapp.conf*, for the app:
 
@@ -156,6 +156,12 @@ The `VirtualHost` block can appear multiple times, in one or more files on a ser
 
 The `VirtualHost` block can appear multiple times, in one or more files on a server. In the preceding configuration file, Apache accepts public traffic on port 80. The domain `www.example.com` is being served, and the `*.example.com` alias resolves to the same website. For more information, see [Name-based virtual host support](https://httpd.apache.org/docs/current/vhosts/name-based.html). Requests are proxied at the root to port 5000 of the server at 127.0.0.1. For bi-directional communication, `ProxyPass` and `ProxyPassReverse` are required. To change Kestrel's IP/port, see [Kestrel: Endpoint configuration](xref:fundamentals/servers/kestrel#endpoint-configuration).
 
+Create a symbolic link to the `/etc/apache2/sites-enabled` directory for Apache to read during startup:
+
+```bash
+sudo ln -s /etc/apache2/sites-available/helloapp.conf /etc/apache2/sites-enabled/
+```
+
 ::: moniker-end
 
 > [!WARNING]
@@ -166,7 +172,7 @@ Logging can be configured per `VirtualHost` using `ErrorLog` and `CustomLog` dir
 Save the file and test the configuration. If everything passes, the response should be `Syntax [OK]`.
 
 ```bash
-sudo service httpd configtest
+sudo apachectl configtest
 ```
 
 Restart Apache:

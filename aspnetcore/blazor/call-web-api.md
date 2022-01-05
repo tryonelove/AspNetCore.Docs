@@ -40,7 +40,7 @@ Use the following `TodoItem` class with this article's examples if you build the
 public class TodoItem
 {
     public long Id { get; set; }
-    public string Name { get; set; }
+    public string? Name { get; set; }
     public bool IsComplete { get; set; }
 }
 ```
@@ -109,7 +109,7 @@ else
 }
 
 @code {
-    private TodoItem[] todoItems;
+    private TodoItem[]? todoItems;
 
     protected override async Task OnInitializedAsync() => 
         todoItems = await Http.GetFromJsonAsync<TodoItem[]>("api/TodoItems");
@@ -132,7 +132,7 @@ In the following component code, `newItemName` is provided by a bound element of
 <button @onclick="AddItem">Add</button>
 
 @code {
-    private string newItemName;
+    private string? newItemName;
 
     private async Task AddItem()
     {
@@ -152,7 +152,7 @@ var content = await response.Content.ReadFromJsonAsync<WeatherForecast>();
 
 <xref:System.Net.Http.Json.HttpClientJsonExtensions.PutAsJsonAsync%2A> sends an HTTP PUT request with JSON-encoded content.
 
-In the following component code, `editItem` values for `Name` and `IsCompleted` are provided by bound elements of the component. The item's `Id` is set when the item is selected in another part of the UI (not shown) and `EditItem` is called. The `SaveItem` method is triggered by selecting the `<button>` element.
+In the following component code, `editItem` values for `Name` and `IsCompleted` are provided by bound elements of the component. The item's `Id` is set when the item is selected in another part of the UI (not shown) and `EditItem` is called. The `SaveItem` method is triggered by selecting the `<button>` element. Note that the following example doesn't show loading `todoItems` for brevity (see the [GET from JSON (`GetFromJsonAsync`)](#get-from-json-getfromjsonasync) section for an example of loading items).
 
 ```razor
 @using System.Net.Http
@@ -165,7 +165,7 @@ In the following component code, `editItem` values for `Name` and `IsCompleted` 
 <button @onclick="SaveItem">Save</button>
 
 @code {
-    private string id;
+    private string? id;
     private TodoItem editItem = new TodoItem();
 
     private void EditItem(long id)
@@ -210,13 +210,9 @@ In the following component code, the `<button>` element calls the `DeleteItem` m
 
 <xref:System.Net.Http.IHttpClientFactory> services and the configuration of a named <xref:System.Net.Http.HttpClient> are supported.
 
-Reference the [`Microsoft.Extensions.Http`](https://www.nuget.org/packages/Microsoft.Extensions.Http) NuGet package in the project file:
+Add the [`Microsoft.Extensions.Http`](https://www.nuget.org/packages/Microsoft.Extensions.Http) NuGet package to the app.
 
-```xml
-<PackageReference Include="Microsoft.Extensions.Http" Version="{VERSION}" />
-```
-
-In the preceding example, the `{VERSION}` placeholder is the version of the package.
+[!INCLUDE[](~/includes/package-reference.md)]
 
 In `Program.cs`:
 
@@ -262,7 +258,7 @@ else
 }
 
 @code {
-    private WeatherForecast[] forecasts;
+    private WeatherForecast[]? forecasts;
 
     protected override async Task OnInitializedAsync()
     {
@@ -355,7 +351,7 @@ else
 }
 
 @code {
-    private WeatherForecast[] forecasts;
+    private WeatherForecast[]? forecasts;
 
     protected override async Task OnInitializedAsync()
     {
@@ -460,8 +456,8 @@ else
 </p>
 
 @code {
-    private WeatherForecast[] forecasts;
-    private string exceptionMessage;
+    private WeatherForecast[]? forecasts;
+    private string? exceptionMessage;
 
     protected override async Task OnInitializedAsync()
     {
@@ -829,13 +825,9 @@ In the following component code, the `<button>` element calls the `DeleteItem` m
 
 <xref:System.Net.Http.IHttpClientFactory> services and the configuration of a named <xref:System.Net.Http.HttpClient> are supported.
 
-Reference the [`Microsoft.Extensions.Http`](https://www.nuget.org/packages/Microsoft.Extensions.Http) NuGet package in the project file:
+Add the [`Microsoft.Extensions.Http`](https://www.nuget.org/packages/Microsoft.Extensions.Http) NuGet package to the app.
 
-```xml
-<PackageReference Include="Microsoft.Extensions.Http" Version="{VERSION}" />
-```
-
-In the preceding example, the `{VERSION}` placeholder is the version of the package.
+[!INCLUDE[](~/includes/package-reference.md)]
 
 In `Program.cs`:
 
@@ -1450,13 +1442,9 @@ In the following component code, the `<button>` element calls the `DeleteItem` m
 
 <xref:System.Net.Http.IHttpClientFactory> services and the configuration of a named <xref:System.Net.Http.HttpClient> are supported.
 
-Reference the [`Microsoft.Extensions.Http`](https://www.nuget.org/packages/Microsoft.Extensions.Http) NuGet package in the project file:
+Add the [`Microsoft.Extensions.Http`](https://www.nuget.org/packages/Microsoft.Extensions.Http) NuGet package to the app.
 
-```xml
-<PackageReference Include="Microsoft.Extensions.Http" Version="{VERSION}" />
-```
-
-In the preceding example, the `{VERSION}` placeholder is the version of the package.
+[!INCLUDE[](~/includes/package-reference.md)]
 
 In `Program.cs`:
 

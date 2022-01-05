@@ -322,6 +322,18 @@ For more information on the Component Tag Helper, including passing parameters a
 
 Additional work might be required depending on the static resources that components use and how layout pages are organized in an app. Typically, scripts are added to a page or view's `Scripts` render section and stylesheets are added to the layout's `<head>` element content.
 
+### Ensure that top-level prerendered components aren't trimmed out on publish
+
+If a [Component Tag Helper](xref:mvc/views/tag-helpers/builtin-th/component-tag-helper) directly references a component from a library that's subject to trimming on publish, the component might be trimmed out during publish because there are no references to it from client-side app code. As a result, the component isn't prerendered, leaving a blank spot in the output. If this occurs, instruct the trimmer to preserve the library component by adding a [`DynamicDependency` attribute](xref:System.Diagnostics.CodeAnalysis.DynamicDependencyAttribute) to any class in the client-side app. To preserve a component called `SomeLibraryComponentToBePreserved`, add the following to any component:
+
+```razor
+@using System.Diagnostics.CodeAnalysis
+@attribute [DynamicDependency(DynamicallyAccessedMemberTypes.All, 
+    typeof(SomeLibraryComponentToBePreserved))]
+```
+
+The preceding approach usually isn't required because in most cases the app prerenders its components (which are not trimmed), which in turn references components from libraries (causing them also not to be trimmed). Only use `DynamicDependency` explicitly for prerendering a library component directly when the library is subject to trimming.
+
 ## Render components in a page or view with a CSS selector
 
 After [configuring the solution](#solution-configuration), including the [additional configuration](#configuration-for-embedding-razor-components-into-pages-and-views), add root components to the **`Client`** project of a hosted Blazor WebAssembly solution in the `Program.cs` file. In the following example, the `Counter` component is declared as a root component with a CSS selector that selects the element with the `id` that matches `counter-component`. In the following example, the **`Client`** project's namespace is `BlazorHosted.Client`.
@@ -564,6 +576,8 @@ To support routable Razor components in Razor Pages apps:
    ```razor
    @page "/routable-counter"
 
+   <PageTitle>Routable Counter</PageTitle>
+
    <h1>Routable Counter</h1>
 
    <p>Current count: @currentCount</p>
@@ -660,6 +674,8 @@ To support routable Razor components in MVC apps:
    ```razor
    @page "/routable-counter"
 
+   <PageTitle>Routable Counter</PageTitle>
+
    <h1>Routable Counter</h1>
 
    <p>Current count: @currentCount</p>
@@ -699,7 +715,7 @@ When the page or view renders:
 The following Razor page renders a `Counter` component:
 
 ```cshtml
-<h1>My Razor Page</h1>
+<h1>Razor Page</h1>
 
 <component type="typeof(Counter)" render-mode="ServerPrerendered" 
     param-InitialValue="InitialValue" />
@@ -720,7 +736,7 @@ For more information, see <xref:mvc/views/tag-helpers/builtin-th/component-tag-h
 In the following Razor page, the `Counter` component is statically rendered with an initial value that's specified using a form. Since the component is statically rendered, the component isn't interactive:
 
 ```cshtml
-<h1>My Razor Page</h1>
+<h1>Razor Page</h1>
 
 <form>
     <input type="number" asp-for="InitialValue" />
@@ -776,16 +792,18 @@ To solve these problems, Blazor supports persisting state in a prerendered page 
 
 Decide what state to persist using the <xref:Microsoft.AspNetCore.Components.PersistentComponentState> service. [`PersistentComponentState.RegisterOnPersisting`](xref:Microsoft.AspNetCore.Components.PersistentComponentState.RegisterOnPersisting%2A) registers a callback to persist the component state before the app is paused. The state is retrieved when the application resumes.
 
-The following example shows how the weather forecast in the `FetchData` component from a hosted Blazor WebAssembly app based on the Blazor project template is persisted during prerendering and then retrieved to initialize the component. The Persist Component State Tag Helper persists the component state after all component invocations.
+The following example is an updated version of the `FetchData` component in a hosted Blazor WebAssembly app based on the Blazor project template. The `WeatherForecastPreserveState` component persists weather forecast state during prerendering and then retrieves the state to initialize the component. The [Persist Component State Tag Helper](xref:mvc/views/tag-helpers/builtin-th/persist-component-state-tag-helper) persists the component state after all component invocations.
 
-`Pages/FetchData.razor`:
+`Pages/WeatherForecastPreserveState.razor`:
 
 ```razor
-@page "/fetchdata"
+@page "/weather-forecast-preserve-state"
 @implements IDisposable
 @using BlazorSample.Shared
 @inject IWeatherForecastService WeatherForecastService
 @inject PersistentComponentState ApplicationState
+
+<PageTitle>Weather Forecast</PageTitle>
 
 <h1>Weather forecast</h1>
 

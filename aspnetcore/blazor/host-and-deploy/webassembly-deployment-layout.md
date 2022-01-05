@@ -40,15 +40,9 @@ Later in this article, the [Customize the Blazor WebAssembly loading process via
 
 1. Use an existing hosted Blazor WebAssembly solution or create a new solution from the Blazor WebAssembly project template using Visual Studio or by passing the [`-ho|--hosted` option](/dotnet/core/tools/dotnet-new-sdk-templates#blazorwasm) to the [`dotnet new`](/dotnet/core/tools/dotnet-new) command (`dotnet new blazorwasm -ho`). For more information, see <xref:blazor/tooling>.
 
-1. In the **`Client`** project, add a reference to the experimental `Microsoft.AspNetCore.Components.WebAssembly.MultipartBundle` package:
+1. In the **`Client`** project, add the experimental `Microsoft.AspNetCore.Components.WebAssembly.MultipartBundle` package.
 
-   ```xml
-   <PackageReference 
-     Include="Microsoft.AspNetCore.Components.WebAssembly.MultipartBundle" 
-     Version="{VERSION}" />
-   ```
-
-   Change the `{VERSION}` placeholder of the preceding package reference to the version of the package. The latest version can be found at [`Microsoft.AspNetCore.Components.WebAssembly.MultipartBundle` package (NuGet.org)](https://www.nuget.org/packages/Microsoft.AspNetCore.Components.WebAssembly.MultipartBundle).
+   [!INCLUDE[](~/includes/package-reference.md)]
 
 1. In the **`Server`** project, add an endpoint for serving the bundle file (`app.bundle`). Example code can be found in the [Serve the bundle from the host server app](#serve-the-bundle-from-the-host-server-app) section of this article.
 
@@ -144,13 +138,13 @@ namespace Microsoft.AspNetCore.Components.WebAssembly.MultipartBundle.Tasks
     public class BundleBlazorAssets : Task
     {
         [Required]
-        public ITaskItem[] PublishBlazorBootStaticWebAsset { get; set; }
+        public ITaskItem[]? PublishBlazorBootStaticWebAsset { get; set; }
 
         [Required]
-        public string BundlePath { get; set; }
+        public string? BundlePath { get; set; }
 
         [Output]
-        public ITaskItem[] Extension { get; set; }
+        public ITaskItem[]? Extension { get; set; }
 
         public override bool Execute()
         {

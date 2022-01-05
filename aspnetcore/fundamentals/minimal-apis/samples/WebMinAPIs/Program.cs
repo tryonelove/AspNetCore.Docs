@@ -27,14 +27,14 @@ app.Run();
 #endregion
 #elif CHNGR
 #region snippet_chngr
-var builder = WebApplication.CreateBuilder(args);
-
-// Look for static files in webroot.
-builder.WebHost.UseWebRoot("webroot");
+var builder = WebApplication.CreateBuilder(new WebApplicationOptions
+{
+    Args = args,
+    // Look for static files in webroot
+    WebRootPath = "webroot"
+});
 
 var app = builder.Build();
-
-app.MapGet("/", () => "Hello World!");
 
 app.Run();
 #endregion
@@ -809,6 +809,22 @@ if (app.Environment.IsDevelopment())
 app.MapGet("/swag", () => "Hello Swagger!");
 app.MapGet("/skipme", () => "Skipping Swagger.")
                     .ExcludeFromDescription();
+
+app.Run();
+#endregion
+
+#elif FILEUPLOAD
+#region snippet_fileupload
+var builder = WebApplication.CreateBuilder(args);
+var app = builder.Build();
+
+app.MapPost("/uploadstream", async (IConfiguration config, HttpRequest request) =>
+{
+    var filePath = Path.Combine(config["StoredFilesPath"], Path.GetRandomFileName());
+
+    await using var writeStream = File.Create(filePath);
+    await request.BodyReader.CopyToAsync(writeStream);
+});
 
 app.Run();
 #endregion

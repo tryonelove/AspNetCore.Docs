@@ -23,30 +23,7 @@ The following example sets the page's title and description using Razor.
 
 `Pages/ControlHeadContent.razor`:
 
-```razor
-@page "/control-head-content"
-
-<h1>Control &lt;head&gt; content</h1>
-
-<p>
-    Title: @title
-</p>
-
-<p>
-    Description: @description
-</p>
-
-<PageTitle>@title</PageTitle>
-
-<HeadContent>
-    <meta name="description" content="@description">
-</HeadContent>
-
-@code {
-    private string description = "Description set by component";
-    private string title = "Title set by component";
-}
-```
+[!code-razor[](~/blazor/samples/6.0/BlazorSample_WebAssembly/Pages/control-head-content/ControlHeadContent.razor?highlight=13,15-17)]
 
 ## Control head content during prerendering
 
@@ -101,9 +78,11 @@ In Blazor apps created from Blazor project templates, the `NotFound` component t
 
 ## Additional resources
 
+* [Control headers in C# code at startup](xref:blazor/fundamentals/startup#control-headers-in-c-code)
+
 Mozilla MDN Web Docs documentation:
 
 * [What's in the head? Metadata in HTML](https://developer.mozilla.org/docs/Learn/HTML/Introduction_to_HTML/The_head_metadata_in_HTML)
-* [\<head>: The Document Metadata (Header) element](https://developer.mozilla.org/docs/Web/HTML/Element/head)
-* [\<title>: The Document Title element](https://developer.mozilla.org/docs/Web/HTML/Element/title)
-* [\<meta>: The metadata element](https://developer.mozilla.org/docs/Web/HTML/Element/meta)
+* [`<head>`: The Document Metadata (Header) element](https://developer.mozilla.org/docs/Web/HTML/Element/head)
+* [`<title>`: The Document Title element](https://developer.mozilla.org/docs/Web/HTML/Element/title)
+* [`<meta>`: The metadata element](https://developer.mozilla.org/docs/Web/HTML/Element/meta)

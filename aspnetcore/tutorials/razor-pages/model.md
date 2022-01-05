@@ -3,7 +3,8 @@ title: Part 2, add a model
 author: rick-anderson
 description: Part 2 of tutorial series on Razor Pages. In this section, model classes are added.
 ms.author: riande
-ms.date: 11/12/2021
+ms.date: 1/2/2022
+monikerRange: '>= aspnetcore-3.1'
 ms.custom: contperf-fy21q2
 no-loc: [Home, Privacy, Index, appsettings.json, "ASP.NET Core Identity", cookie, Cookie, Blazor, "Blazor Server", "Blazor WebAssembly", "Identity", "Let's Encrypt", Razor, SignalR]
 uid: tutorials/razor-pages/model
@@ -130,7 +131,7 @@ The *appsettings.json* file is updated with the connection string used to connec
 
 # [Visual Studio Code](#tab/visual-studio-code)
 
-* Open a command shell to the project directory, which contains the *Program.cs*, *Startup.cs*, and *.csproj* files. Run the following command:
+* Open a command shell to the project directory, which contains the *Program.cs* and *.csproj* files. Run the following command:
 
   ```dotnetcli
   dotnet-aspnet-codegenerator razorpage -m Movie -dc RazorPagesMovieContext -udl -outDir Pages/Movies --referenceScriptLibraries -sqlite

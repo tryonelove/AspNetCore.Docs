@@ -92,7 +92,7 @@ To debug a Blazor WebAssembly app in Visual Studio:
    > * Configure Visual Studio to launch the browser with the user's profile. For more information on this approach, see [Blazor WASM Debugging in VS launches Edge with a separate user data directory (dotnet/aspnetcore #20915)](https://github.com/dotnet/aspnetcore/issues/20915#issuecomment-614933322).
 
    > [!NOTE]
-   > **Start Without Debugging** (<kbd>Ctrl</kbd>+<kbd>F5</kbd>) isn't supported. When the app is run in Debug configuration, debugging overhead always results in a small performance reduction.
+   > **Start Without Debugging** [<kbd>Ctrl</kbd>+<kbd>F5</kbd> (Windows) or <kbd>⌘</kbd>+<kbd>F5</kbd> (macOS)] isn't supported. When the app is run in Debug configuration, debugging overhead always results in a small performance reduction.
 
 1. In the `*Client*` app, set a breakpoint on the `currentCount++;` line in `Pages/Counter.razor`.
 1. In the browser, navigate to `Counter` page and select the **Click me** button to hit the breakpoint.
@@ -177,7 +177,7 @@ For information on configuring VS Code assets in the `.vscode` folder, see the *
 1. Start debugging using the <kbd>F5</kbd> keyboard shortcut or the menu item.
 
    > [!NOTE]
-   > **Start Without Debugging** (<kbd>Ctrl</kbd>+<kbd>F5</kbd>) isn't supported. When the app is run in Debug configuration, debugging overhead always results in a small performance reduction.
+   > **Start Without Debugging** [<kbd>Ctrl</kbd>+<kbd>F5</kbd> (Windows) or <kbd>⌘</kbd>+<kbd>F5</kbd> (macOS)] isn't supported. When the app is run in Debug configuration, debugging overhead always results in a small performance reduction.
 
 1. When prompted, select the **Blazor WebAssembly Debug** option to start debugging.
 
@@ -221,7 +221,7 @@ The following launch configuration options are supported for the `blazorwasm` de
 | Option    | Description |
 | --------- | ----------- |
 | `request` | Use `launch` to launch and attach a debugging session to a Blazor WebAssembly app or `attach` to attach a debugging session to an already-running app. |
-| `url`     | The URL to open in the browser when debugging. |
+| `url`     | The URL to open in the browser when debugging. Defaults to `https://localhost:5001`. If the app is running at a different URL, an `about:blank` tab launches in the browser. |
 | `browser` | The browser to launch for the debugging session. Set to `edge` or `chrome`. Defaults to `chrome`. |
 | `trace`   | Used to generate logs from the JS debugger. Set to `true` to generate logs. |
 | `hosted`  | Must be set to `true` if launching and debugging a hosted Blazor WebAssembly app. |
@@ -472,7 +472,7 @@ To debug a Blazor WebAssembly app in Visual Studio:
    > * Configure Visual Studio to launch the browser with the user's profile. For more information on this approach, see [Blazor WASM Debugging in VS launches Edge with a separate user data directory (dotnet/aspnetcore #20915)](https://github.com/dotnet/aspnetcore/issues/20915#issuecomment-614933322).
 
    > [!NOTE]
-   > **Start Without Debugging** (<kbd>Ctrl</kbd>+<kbd>F5</kbd>) isn't supported. When the app is run in Debug configuration, debugging overhead always results in a small performance reduction.
+   > **Start Without Debugging** [<kbd>Ctrl</kbd>+<kbd>F5</kbd> (Windows) or <kbd>⌘</kbd>+<kbd>F5</kbd> (macOS)] isn't supported. When the app is run in Debug configuration, debugging overhead always results in a small performance reduction.
 
 1. In the `*Client*` app, set a breakpoint on the `currentCount++;` line in `Pages/Counter.razor`.
 1. In the browser, navigate to `Counter` page and select the **Click me** button to hit the breakpoint.
@@ -557,7 +557,7 @@ For information on configuring VS Code assets in the `.vscode` folder, see the *
 1. Start debugging using the <kbd>F5</kbd> keyboard shortcut or the menu item.
 
    > [!NOTE]
-   > **Start Without Debugging** (<kbd>Ctrl</kbd>+<kbd>F5</kbd>) isn't supported. When the app is run in Debug configuration, debugging overhead always results in a small performance reduction.
+   > **Start Without Debugging** [<kbd>Ctrl</kbd>+<kbd>F5</kbd> (Windows) or <kbd>⌘</kbd>+<kbd>F5</kbd> (macOS)] isn't supported. When the app is run in Debug configuration, debugging overhead always results in a small performance reduction.
 
 1. When prompted, select the **Blazor WebAssembly Debug** option to start debugging.
 
@@ -649,7 +649,7 @@ The following launch configuration options are supported for the `blazorwasm` de
 | Option    | Description |
 | --------- | ----------- |
 | `request` | Use `launch` to launch and attach a debugging session to a Blazor WebAssembly app or `attach` to attach a debugging session to an already-running app. |
-| `url`     | The URL to open in the browser when debugging. Defaults to `https://localhost:5001`. |
+| `url`     | The URL to open in the browser when debugging. Defaults to `https://localhost:5001`. If the app is running at a different URL, an `about:blank` tab launches in the browser. |
 | `browser` | The browser to launch for the debugging session. Set to `edge` or `chrome`. Defaults to `chrome`. |
 | `trace`   | Used to generate logs from the JS debugger. Set to `true` to generate logs. |
 | `hosted`  | Must be set to `true` if launching and debugging a hosted Blazor WebAssembly app. |
@@ -900,7 +900,7 @@ To debug a Blazor WebAssembly app in Visual Studio:
    > * Configure Visual Studio to launch the browser with the user's profile. For more information on this approach, see [Blazor WASM Debugging in VS launches Edge with a separate user data directory (dotnet/aspnetcore #20915)](https://github.com/dotnet/aspnetcore/issues/20915#issuecomment-614933322).
 
    > [!NOTE]
-   > **Start Without Debugging** (<kbd>Ctrl</kbd>+<kbd>F5</kbd>) isn't supported. When the app is run in Debug configuration, debugging overhead always results in a small performance reduction.
+   > **Start Without Debugging** [<kbd>Ctrl</kbd>+<kbd>F5</kbd> (Windows) or <kbd>⌘</kbd>+<kbd>F5</kbd> (macOS)] isn't supported. When the app is run in Debug configuration, debugging overhead always results in a small performance reduction.
 
 1. In the `*Client*` app, set a breakpoint on the `currentCount++;` line in `Pages/Counter.razor`.
 1. In the browser, navigate to `Counter` page and select the **Click me** button to hit the breakpoint.
@@ -985,7 +985,7 @@ For information on configuring VS Code assets in the `.vscode` folder, see the *
 1. Start debugging using the <kbd>F5</kbd> keyboard shortcut or the menu item.
 
    > [!NOTE]
-   > **Start Without Debugging** (<kbd>Ctrl</kbd>+<kbd>F5</kbd>) isn't supported. When the app is run in Debug configuration, debugging overhead always results in a small performance reduction.
+   > **Start Without Debugging** [<kbd>Ctrl</kbd>+<kbd>F5</kbd> (Windows) or <kbd>⌘</kbd>+<kbd>F5</kbd> (macOS)] isn't supported. When the app is run in Debug configuration, debugging overhead always results in a small performance reduction.
 
 1. When prompted, select the **Blazor WebAssembly Debug** option to start debugging.
 
@@ -1077,7 +1077,7 @@ The following launch configuration options are supported for the `blazorwasm` de
 | Option    | Description |
 | --------- | ----------- |
 | `request` | Use `launch` to launch and attach a debugging session to a Blazor WebAssembly app or `attach` to attach a debugging session to an already-running app. |
-| `url`     | The URL to open in the browser when debugging. Defaults to `https://localhost:5001`. |
+| `url`     | The URL to open in the browser when debugging. Defaults to `https://localhost:5001`. If the app is running at a different URL, an `about:blank` tab launches in the browser. |
 | `browser` | The browser to launch for the debugging session. Set to `edge` or `chrome`. Defaults to `chrome`. |
 | `trace`   | Used to generate logs from the JS debugger. Set to `true` to generate logs. |
 | `hosted`  | Must be set to `true` if launching and debugging a hosted Blazor WebAssembly app. |

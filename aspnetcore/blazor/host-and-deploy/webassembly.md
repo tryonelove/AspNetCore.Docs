@@ -27,7 +27,7 @@ The following deployment strategies are supported:
 
 Blazor WebAssembly supports [ahead-of-time (AOT) compilation](/dotnet/standard/glossary#aot), where you can compile your .NET code directly into WebAssembly. AOT compilation results in runtime performance improvements at the expense of a larger app size.
 
-Without enabling AOT compilation, Blazor WebAssembly apps run on the browser using a .NET Intermediate Language (IL) interpreter implemented in WebAssembly. Because the .NET code is interpreted, apps typically run slower than they would on a server-side [.NET just-in-time (JIT) runtime](/dotnet/standard/glossary#jit). AOT compilation addresses this performance issue by compiling an app's .NET code directly into WebAssembly for native WebAssembly execution by the browser. The AOT performance improvement can yield dramatic improvements for apps that execute CPU intensive tasks. The drawback to using AOT compilation is that AOT-compiled apps are generally larger than their IL-interpreted counterparts, so they usually take longer to download to the client when first requested.
+Without enabling AOT compilation, Blazor WebAssembly apps run on the browser using a .NET Intermediate Language (IL) interpreter implemented in WebAssembly. Because the .NET code is interpreted, apps typically run slower than they would on a server-side [.NET just-in-time (JIT) runtime](/dotnet/standard/glossary#jit). AOT compilation addresses this performance issue by compiling an app's .NET code directly into WebAssembly for native WebAssembly execution by the browser. The AOT performance improvement can yield dramatic improvements for apps that execute CPU-intensive tasks. The drawback to using AOT compilation is that AOT-compiled apps are generally larger than their IL-interpreted counterparts, so they usually take longer to download to the client when first requested.
 
 For guidance on installing the .NET WebAssembly build tools, see <xref:blazor/tooling#net-webassembly-build-tools>.
 
@@ -49,11 +49,16 @@ WebAssembly AOT compilation is only performed when the project is published. AOT
 
 The size of an AOT-compiled Blazor WebAssembly app is generally larger than the size of the app if compiled into .NET IL. Although the size difference depends on the app, most AOT-compiled apps are about twice the size of their IL-compiled versions. This means that using AOT compilation trades off load time performance for runtime performance. Whether this tradeoff is worth using AOT compilation depends on your app. Blazor WebAssembly apps that are CPU intensive generally benefit the most from AOT compilation.
 
+> [!NOTE]
+> For [Mono](https://github.com/mono/mono)/WebAssembly MSBuild properties and targets, see [`WasmApp.targets` (dotnet/runtime GitHub repository)](https://github.com/dotnet/runtime/blob/main/src/mono/wasm/build/WasmApp.targets). Official documentation for common MSBuild properties is planned per [Document blazor msbuild configuration options (dotnet/docs #27395)](https://github.com/dotnet/docs/issues/27395).
+
 ## Runtime relinking
 
 One of the largest parts of a Blazor WebAssembly app is the WebAssembly-based .NET runtime (`dotnet.wasm`) that the browser must download when the app is first accessed by a user's browser. Relinking the .NET WebAssembly runtime trims unused runtime code and thus improves download speed.
 
-Runtime relinking is performed automatically when you publish an app. The size reduction is particularly dramatic when disabling globalization. For more information, see <xref:blazor/globalization-localization>. For guidance on installing the .NET WebAssembly build tools, see <xref:blazor/tooling#net-webassembly-build-tools>.
+Runtime relinking requires installation of the .NET WebAssembly build tools. For more information, see <xref:blazor/tooling#net-webassembly-build-tools>.
+
+With the .NET WebAssembly build tools installed, runtime relinking is performed automatically when an app is **published** in the `Release` configuration. The size reduction is particularly dramatic when disabling globalization. For more information, see <xref:blazor/globalization-localization#invariant-globalization>.
 
 ## Customize how boot resources are loaded
 
@@ -732,6 +737,17 @@ In the project file, the script is run after publishing the app:
 > [!NOTE]
 > When renaming and lazy loading the same assemblies, see the guidance in <xref:blazor/webassembly-lazy-load-assemblies#onnavigateasync-events-and-renamed-assembly-files>.
 
+## Prior deployment corruption
+
+Typically on deployment:
+
+* Only the files that have changed are replaced, which usually results in a faster deployment.
+* Existing files that aren't part of the new deployment are left in place for use by the new deployment.
+
+In rare cases, lingering files from a prior deployment can corrupt a new deployment. Completely deleting the existing deployment (or locally-published app prior to deployment) may resolve the issue with a corrupted deployment. Often, deleting the existing deployment ***once*** is sufficient to resolve the problem, including for a DevOps build and deploy pipeline.
+
+If you determine that clearing a prior deployment is always required when a DevOps build and deploy pipeline is in use, you can temporarily add a step to the build pipeline to delete the prior deployment for each new deployment until you troubleshoot the exact cause of the corruption.
+
 ## Resolve integrity check failures
 
 When Blazor WebAssembly downloads an app's startup files, it instructs the browser to perform integrity checks on the responses. It uses information in the `blazor.boot.json` file to specify the expected SHA-256 hash values for `.dll`, `.wasm`, and other files. This is beneficial for the following reasons:
@@ -773,7 +789,7 @@ If you confirm that the server is returning plausibly correct data, there must b
 
 ### Troubleshoot integrity PowerShell script
 
-Use the [`integrity.ps1`](https://github.com/dotnet/AspNetCore.Docs/blob/main/aspnetcore/blazor/host-and-deploy/webassembly/_samples/integrity.ps1?raw=true) PowerShell script to validate a published and deployed Blazor app. The script is provided for PowerShell Core 6 as a starting point when the app has integrity issues that the Blazor framework can't identify. Customization of the script might be required for your apps, including if running on version of PowerShell later than version 6.2.7.
+Use the [`integrity.ps1`](https://github.com/dotnet/AspNetCore.Docs/blob/main/aspnetcore/blazor/host-and-deploy/webassembly/_samples/integrity.ps1?raw=true) PowerShell script to validate a published and deployed Blazor app. The script is provided for PowerShell Core 7 or later as a starting point when the app has integrity issues that the Blazor framework can't identify. Customization of the script might be required for your apps, including if running on version of PowerShell later than version 7.2.0.
 
 The script checks the files in the `publish` folder and downloaded from the deployed app to detect issues in the different manifests that contain integrity hashes. These checks should detect the most common problems:
 
@@ -787,9 +803,15 @@ Invoke the script with the following command in a PowerShell command shell:
 .\integrity.ps1 {BASE URL} {PUBLISH OUTPUT FOLDER}
 ```
 
+In the following example, the script is executed on a locally-running app at `https://localhost:5001/`:
+
+```powershell
+.\integrity.ps1 https://localhost:5001/ C:\TestApps\BlazorSample\bin\Release\net6.0\publish\
+```
+
 Placeholders:
 
-* `{BASE URL}`: The URL of the deployed app.
+* `{BASE URL}`: The URL of the deployed app. A trailing slash (`/`) is required.
 * `{PUBLISH OUTPUT FOLDER}`: The path to the app's `publish` folder or location where the app is published for deployment.
 
 > [!NOTE]
@@ -803,8 +825,8 @@ Placeholders:
 >
 > Comparing the checksum of a file to a valid checksum value doesn't guarantee file safety, but modifying a file in a way that maintains a checksum value isn't trivial for malicious users. Therefore, checksums are useful as a general security approach. Compare the checksum of the local `integrity.ps1` file to one of the following values:
 >
-> * SHA256: `6b0dc7aba5d8489136bb2969036432597615b11b4e432535e173ca077a0449c4`
-> * MD5: `f0c800a4c72604bd47f3c19f5f0bb4f4`
+> * SHA256: `32c24cb667d79a701135cb72f6bae490d81703323f61b8af2c7e5e5dc0f0c2bb`
+> * MD5: `9cee7d7ec86ee809a329b5406fbf21a8`
 >
 > Obtain the file's checksum on Windows OS with the following command. Provide the path and file name for the `{PATH AND FILE NAME}` placeholder and indicate the type of checksum to produce for the `{SHA512|MD5}` placeholder, either `SHA256` or `MD5`:
 >
@@ -1551,6 +1573,17 @@ In the project file, the script is run after publishing the app:
 > [!NOTE]
 > When renaming and lazy loading the same assemblies, see the guidance in <xref:blazor/webassembly-lazy-load-assemblies#onnavigateasync-events-and-renamed-assembly-files>.
 
+## Prior deployment corruption
+
+Typically on deployment:
+
+* Only the files that have changed are replaced, which usually results in a faster deployment.
+* Existing files that aren't part of the new deployment are left in place for use by the new deployment.
+
+In rare cases, lingering files from a prior deployment can corrupt a new deployment. Completely deleting the existing deployment (or locally-published app prior to deployment) may resolve the issue with a corrupted deployment. Often, deleting the existing deployment ***once*** is sufficient to resolve the problem, including for a DevOps build and deploy pipeline.
+
+If you determine that clearing a prior deployment is always required when a DevOps build and deploy pipeline is in use, you can temporarily add a step to the build pipeline to delete the prior deployment for each new deployment until you troubleshoot the exact cause of the corruption.
+
 ## Resolve integrity check failures
 
 When Blazor WebAssembly downloads an app's startup files, it instructs the browser to perform integrity checks on the responses. It uses information in the `blazor.boot.json` file to specify the expected SHA-256 hash values for `.dll`, `.wasm`, and other files. This is beneficial for the following reasons:
@@ -1592,7 +1625,7 @@ If you confirm that the server is returning plausibly correct data, there must b
 
 ### Troubleshoot integrity PowerShell script
 
-Use the [`integrity.ps1`](https://github.com/dotnet/AspNetCore.Docs/blob/main/aspnetcore/blazor/host-and-deploy/webassembly/_samples/integrity.ps1?raw=true) PowerShell script to validate a published and deployed Blazor app. The script is provided for PowerShell Core 6 as a starting point when the app has integrity issues that the Blazor framework can't identify. Customization of the script might be required for your apps, including if running on version of PowerShell later than version 6.2.7.
+Use the [`integrity.ps1`](https://github.com/dotnet/AspNetCore.Docs/blob/main/aspnetcore/blazor/host-and-deploy/webassembly/_samples/integrity.ps1?raw=true) PowerShell script to validate a published and deployed Blazor app. The script is provided for PowerShell Core 7 or later as a starting point when the app has integrity issues that the Blazor framework can't identify. Customization of the script might be required for your apps, including if running on version of PowerShell later than version 7.2.0.
 
 The script checks the files in the `publish` folder and downloaded from the deployed app to detect issues in the different manifests that contain integrity hashes. These checks should detect the most common problems:
 
@@ -1606,9 +1639,15 @@ Invoke the script with the following command in a PowerShell command shell:
 .\integrity.ps1 {BASE URL} {PUBLISH OUTPUT FOLDER}
 ```
 
+In the following example, the script is executed on a locally-running app at `https://localhost:5001/`:
+
+```powershell
+.\integrity.ps1 https://localhost:5001/ C:\TestApps\BlazorSample\bin\Release\net6.0\publish\
+```
+
 Placeholders:
 
-* `{BASE URL}`: The URL of the deployed app.
+* `{BASE URL}`: The URL of the deployed app. A trailing slash (`/`) is required.
 * `{PUBLISH OUTPUT FOLDER}`: The path to the app's `publish` folder or location where the app is published for deployment.
 
 > [!NOTE]
@@ -1622,8 +1661,8 @@ Placeholders:
 >
 > Comparing the checksum of a file to a valid checksum value doesn't guarantee file safety, but modifying a file in a way that maintains a checksum value isn't trivial for malicious users. Therefore, checksums are useful as a general security approach. Compare the checksum of the local `integrity.ps1` file to one of the following values:
 >
-> * SHA256: `6b0dc7aba5d8489136bb2969036432597615b11b4e432535e173ca077a0449c4`
-> * MD5: `f0c800a4c72604bd47f3c19f5f0bb4f4`
+> * SHA256: `32c24cb667d79a701135cb72f6bae490d81703323f61b8af2c7e5e5dc0f0c2bb`
+> * MD5: `9cee7d7ec86ee809a329b5406fbf21a8`
 >
 > Obtain the file's checksum on Windows OS with the following command. Provide the path and file name for the `{PATH AND FILE NAME}` placeholder and indicate the type of checksum to produce for the `{SHA512|MD5}` placeholder, either `SHA256` or `MD5`:
 >
@@ -2370,6 +2409,17 @@ In the project file, the script is run after publishing the app:
 > [!NOTE]
 > When renaming and lazy loading the same assemblies, see the guidance in <xref:blazor/webassembly-lazy-load-assemblies#onnavigateasync-events-and-renamed-assembly-files>.
 
+## Prior deployment corruption
+
+Typically on deployment:
+
+* Only the files that have changed are replaced, which usually results in a faster deployment.
+* Existing files that aren't part of the new deployment are left in place for use by the new deployment.
+
+In rare cases, lingering files from a prior deployment can corrupt a new deployment. Completely deleting the existing deployment (or locally-published app prior to deployment) may resolve the issue with a corrupted deployment. Often, deleting the existing deployment ***once*** is sufficient to resolve the problem, including for a DevOps build and deploy pipeline.
+
+If you determine that clearing a prior deployment is always required when a DevOps build and deploy pipeline is in use, you can temporarily add a step to the build pipeline to delete the prior deployment for each new deployment until you troubleshoot the exact cause of the corruption.
+
 ## Resolve integrity check failures
 
 When Blazor WebAssembly downloads an app's startup files, it instructs the browser to perform integrity checks on the responses. It uses information in the `blazor.boot.json` file to specify the expected SHA-256 hash values for `.dll`, `.wasm`, and other files. This is beneficial for the following reasons:
@@ -2411,7 +2461,7 @@ If you confirm that the server is returning plausibly correct data, there must b
 
 ### Troubleshoot integrity PowerShell script
 
-Use the [`integrity.ps1`](https://github.com/dotnet/AspNetCore.Docs/blob/main/aspnetcore/blazor/host-and-deploy/webassembly/_samples/integrity.ps1?raw=true) PowerShell script to validate a published and deployed Blazor app. The script is provided for PowerShell Core 6 as a starting point when the app has integrity issues that the Blazor framework can't identify. Customization of the script might be required for your apps, including if running on version of PowerShell later than version 6.2.7.
+Use the [`integrity.ps1`](https://github.com/dotnet/AspNetCore.Docs/blob/main/aspnetcore/blazor/host-and-deploy/webassembly/_samples/integrity.ps1?raw=true) PowerShell script to validate a published and deployed Blazor app. The script is provided for PowerShell Core 7 or later as a starting point when the app has integrity issues that the Blazor framework can't identify. Customization of the script might be required for your apps, including if running on version of PowerShell later than version 7.2.0.
 
 The script checks the files in the `publish` folder and downloaded from the deployed app to detect issues in the different manifests that contain integrity hashes. These checks should detect the most common problems:
 
@@ -2425,9 +2475,15 @@ Invoke the script with the following command in a PowerShell command shell:
 .\integrity.ps1 {BASE URL} {PUBLISH OUTPUT FOLDER}
 ```
 
+In the following example, the script is executed on a locally-running app at `https://localhost:5001/`:
+
+```powershell
+.\integrity.ps1 https://localhost:5001/ C:\TestApps\BlazorSample\bin\Release\net6.0\publish\
+```
+
 Placeholders:
 
-* `{BASE URL}`: The URL of the deployed app.
+* `{BASE URL}`: The URL of the deployed app. A trailing slash (`/`) is required.
 * `{PUBLISH OUTPUT FOLDER}`: The path to the app's `publish` folder or location where the app is published for deployment.
 
 > [!NOTE]
@@ -2441,8 +2497,8 @@ Placeholders:
 >
 > Comparing the checksum of a file to a valid checksum value doesn't guarantee file safety, but modifying a file in a way that maintains a checksum value isn't trivial for malicious users. Therefore, checksums are useful as a general security approach. Compare the checksum of the local `integrity.ps1` file to one of the following values:
 >
-> * SHA256: `6b0dc7aba5d8489136bb2969036432597615b11b4e432535e173ca077a0449c4`
-> * MD5: `f0c800a4c72604bd47f3c19f5f0bb4f4`
+> * SHA256: `32c24cb667d79a701135cb72f6bae490d81703323f61b8af2c7e5e5dc0f0c2bb`
+> * MD5: `9cee7d7ec86ee809a329b5406fbf21a8`
 >
 > Obtain the file's checksum on Windows OS with the following command. Provide the path and file name for the `{PATH AND FILE NAME}` placeholder and indicate the type of checksum to produce for the `{SHA512|MD5}` placeholder, either `SHA256` or `MD5`:
 >
